@@ -13,14 +13,14 @@ services:
 
   # web app bundle build
   app:
-    image: poldracklab/crn_app:${CRN_APP_TAG}
+    image: nihfmrif/crn_app:${CRN_APP_TAG}
     volumes:
       - project:/srv/crn-app/dist
     env_file: ./config.env
 
   # crn core (bids-core)
   core:
-    image: poldracklab/bids-core:${BIDS_CORE_TAG}
+    image: nihfmrif/bids-core:${BIDS_CORE_TAG}
     volumes:
       - ${PERSISTENT_DIR}/bids-core/persistent/data:/srv/bids-core/persistent/data
     env_file: ./config.env
@@ -28,7 +28,7 @@ services:
 
   # crn node server
   server:
-    image: poldracklab/crn_server:${CRN_SERVER_TAG}
+    image: nihfmrif/crn_server:${CRN_SERVER_TAG}
     volumes:
       - ./server/client.config.js:/srv/crn-server/client.config.js:rw
       - ${PERSISTENT_DIR}/bids-core/persistent/data:/srv/bids-core/persistent/data
