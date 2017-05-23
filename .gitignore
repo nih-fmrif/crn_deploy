@@ -1,2 +1,6 @@
 .DS_Store
 config.env
+client.config.js
+nido_key.key
+nido_cert.crt
+nginx_error.log
