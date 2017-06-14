@@ -1,2 +1,4 @@
 .DS_Store
 config.env
+nido_private
+.env
