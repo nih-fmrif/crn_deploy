@@ -2,3 +2,4 @@
 config.env
 nido_private
 .env
+.idea
