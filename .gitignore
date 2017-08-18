@@ -3,3 +3,7 @@ config.env
 nido_private
 .env
 .idea
+client.config.js
+nido_key.key
+nido_cert.crt
+nginx_error.log

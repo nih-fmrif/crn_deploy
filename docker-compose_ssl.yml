@@ -10,6 +10,8 @@ services:
   # mongodb
   mongo:
     image: mongo
+    volumes:
+      - ${PERSISTENT_DIR}/mongodb/db:/data/db
 
   # web app bundle build
   app:
