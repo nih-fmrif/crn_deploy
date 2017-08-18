@@ -34,7 +34,7 @@ services:
     volumes:
       - ./server/client.config.js:/srv/crn-server/client.config.js:rw
       - ${PERSISTENT_DIR}/bids-core/persistent/data:/srv/bids-core/persistent/data
-      - /Users/nielsond/code/oneuro/crn_server/persistent:/srv/crn-server/persistent
+      - ${PERSISTENT_DIR}/crn-server/persistent:/srv/crn-server/persistent
     env_file: ./config.env
     restart: always
 
@@ -44,7 +44,7 @@ services:
     volumes:
       - ${PERSISTENT_DIR}/bids-core/persistent/data:/home/${SFTP_USER}/srv/bids-core/persistent/data
       - ${PERSISTENT_DIR}/crn-server/persistent:/home/${SFTP_USER}/srv/crn-server/persistent
-      - /Users/${SFTP_USER}/.ssh/keys:/home/${SFTP_USER}/.ssh/keys
+      - /home/${SFTP_USER}/.ssh/keys:/home/${SFTP_USER}/.ssh/keys
     ports:
       - "8111:22"
     command: ${SFTP_USER}::1001

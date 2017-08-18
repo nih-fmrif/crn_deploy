@@ -1,0 +1,63 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/crn_deploy
+    docker:
+      - image: node:8
+    steps:
+      - checkout
+      - run:
+          name: Expose environment variables
+          command: |
+            set -x
+            env > config.env
+            cat config.env
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: Install Docker Compose
+          command: |
+            set -x
+            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+            chmod +x /usr/local/bin/docker-compose
+
+      - setup_remote_docker
+
+      - run:
+          name: Clone secrets repository
+          command: |
+            set -x
+            git clone git@github.com:nih-fmrif/nido_private.git
+
+      - run:
+          # We need to use volume containers instead of directly mounting host directories.
+          # https://circleci.com/docs/2.0/building-docker-images/#mounting-folders
+          name: Create volume containers
+          command: |
+            set -x
+            docker create -v /app/features --name features alpine:3.4 /bin/bash
+            docker cp ~/crn_deploy/features/. features:/app/features
+
+            docker create -v /var/log/nginx/for_docker --name nido_private_logs alpine:3.4 /bin/true
+            docker create -v /etc/ssl/certs --name nido_private_certs alpine:3.4 /bin/true
+            docker create -v /etc/ssl/private --name nido_private_private alpine:3.4 /bin/true
+            docker create -v /etc/nginx/conf.d --name nido_private_nginx alpine:3.4 /bin/true
+
+            docker create -v /srv/bids-core/persistent/data --name data_bids-core alpine:3.4 /bin/true
+            docker create -v /srv/crn-server/persistent --name data_crn-server alpine:3.4 /bin/true
+
+            docker cp ~/crn_deploy/nido_private/log/. nido_private_logs:/var/log/nginx/for_docker
+            docker cp ~/crn_deploy/nido_private/certs/. nido_private_certs:/etc/ssl/certs
+            docker cp ~/crn_deploy/nido_private/private/. nido_private_private:/etc/ssl/private
+            docker cp ~/crn_deploy/nido_private/nginx-ssl.conf nido_private_nginx:/etc/nginx/conf.d/default.conf
+
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: docker-compose -f docker-compose_ssl_e2e.yml up -d
+      - run: docker run --network container:crndeploy_nginx_1 appropriate/curl --silent --insecure --retry 1000 --retry-delay 1 --retry-connrefused https://localhost/index.html
+      - run: docker run --volumes-from features:ro --network container:crndeploy_nginx_1 dsdenes/chimp
