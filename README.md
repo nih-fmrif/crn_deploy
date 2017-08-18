@@ -54,3 +54,27 @@ If you would like to be able to expose datasets over SFTP to AGAVE you must ensu
 ## Usage
 
 To build the CRN stack you must first install [docker](https://www.docker.com/). Once you've updated the configuration, from the root of this project you can run `docker-compose build` to build all of the containers. This may take a while. Once your containers are built you can run `docker-compose up` and the application will be available at the localhost's port 80.
+
+## CircleCI integration
+- E2E tests need 4-5 minutes to run
+
+### Configuration files used
+
+#### config.env
+- See config.env.example
+
+### Required environment variables to set in CircleCI
+| variable                            | description                                                            |
+|-------------------------------------|------------------------------------------------------------------------|
+| DOCKER_USER                         | Docker Hub username where the private docker images are stored         |
+| DOCKER_PASS                         | Docker Hub password                                                    |
+| NODE_ENV                            | Has to be "staging"                                                    |
+| PERSISTENT_DIR                      | Use "~/crn_data" - temporary library during CircleCI build             |
+| CRN_APP_TAG                         | Use "latest" - crn_app docker image tag to test                                       |
+| CRN_SERVER_TAG                      | Use "latest" - crn_server docker image tag to test                                    |
+| BIDS_CORE_TAG                       | Use "latest" - bids_core docker image tag to test                                    |
+
+### Used Docker Hub images for testing
+- ${DOCKER_USER}/bids_core:${BIDS_CORE_TAG}
+- ${DOCKER_USER}/crn_app:${CRN_APP_TAG}
+- ${DOCKER_USER}/crn_server:${CRN_SERVER_TAG}
