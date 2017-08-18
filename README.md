@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/nih-fmrif/crn_deploy.svg?style=svg)](https://circleci.com/gh/nih-fmrif/crn_deploy)
+
 # CRN - Docker Deployment
 
 This repository contains a docker configuration setup to build the full CRN stack. This includes:
