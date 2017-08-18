@@ -21,7 +21,7 @@ services:
 
   # crn core (bids-core)
   core:
-    image: ${DOCKER_ORG}/bids_core:${BIDS_CORE_TAG}
+    image: ${DOCKER_ORG}/bids-core:${BIDS_CORE_TAG}
     volumes_from:
       - container:data_bids-core
     env_file: ./config.env
